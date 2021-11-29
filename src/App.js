@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Loading from "./Loading";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      pokemon: [],
+      isLoading: true,
+    };
+  }
+
+  componentDidMount() {
+    fetch("https://pokeapi.co/api/v2/pokemon?limit=100&offset=200")
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.setState({
+          pokemon: json.results,
+          isLoading: false,
+        });
+      });
+  }
+
+  render() {
+    return this.state.isLoading ? (
+      <Loading />
+    ) : (
+      <div className="flex">
+        <ul>
+          {this.state.pokemon.map((pokemon) => {
+            return <li key={pokemon.url}>{pokemon.name}</li>;
+          })}
+        </ul>
+      </div>
+    );
+  }
 }
-
-export default App;
